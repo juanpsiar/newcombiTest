@@ -2,6 +2,12 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Previous Setup
+
+Create a .env.development file in the root of the project and add the next values:
+
+- REACT_APP_AUTH_DOMAIN="http://localhost:8081"
+
 ## Available Scripts
 
 In the project directory, you can run:

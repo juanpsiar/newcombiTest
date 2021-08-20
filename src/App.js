@@ -7,6 +7,13 @@ import MainService from './services/MainService.services';
 
 function App() {
   const [userTable, setUserTable] = useState([]);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [newUser, setNewUser] = useState({
+    firstName: '',
+    lastName: '',
+    address: '',
+    ssn: '',
+  });
 
   useEffect(() => {
     getAccesToken();
@@ -57,18 +64,76 @@ function App() {
     }
   };
 
+  const handleSubmit = (event) => {
+    alert('A name was submitted: ' + this.state.value);
+    event.preventDefault();
+  };
+
+  const validateValues = (name, value) => {
+    let validation = false;
+    if (name === 'ssn') {
+      let formatSSN = /\d{3}-\d{2}-\d{4}/;
+      if (value.match(formatSSN)) {
+        return true;
+      } else {
+        setDisableSubmit(true);
+        return false;
+      }
+    } else {
+      if (value.length > 1) {
+        setDisableSubmit(true);
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
+  const handleChange = (e) => {
+    console.log(e.target.value, e.target.name);
+    let name = e.target.name;
+    let value = e.target.value.trim();
+    if (validateValues(name, value)) {
+      setNewUser({ ...newUser, [name]: value });
+    }
+
+    console.log({ newUser });
+  };
+
   return (
     <React.Fragment>
       <Header>Header</Header>
       <div className='flex m-5 '>
-        <form className='flex flex-col w-1/3'>
-          <input type='text' placeholder='First Name' />
-          <input type='text' placeholder='Last Name' />
-          <input type='text' placeholder='Address' />
-          <input type='text' placeholder='SSN' />
+        <form onSubmit={() => handleSubmit()} className='flex flex-col w-1/3'>
+          <input
+            name='firstName'
+            type='text'
+            placeholder='First Name'
+            onChange={handleChange}
+          />
+          <input
+            name='lastName'
+            type='text'
+            placeholder='Last Name'
+            onChange={handleChange}
+          />
+          <input
+            name='address'
+            type='text'
+            placeholder='Address'
+            onChange={handleChange}
+          />
+          <input
+            name='ssn'
+            type='text'
+            placeholder='SSN'
+            onChange={handleChange}
+          />
           <div>
             <button type='reset'>Reset</button>
-            <button>Save</button>
+            <button type='submit' disabled={disableSubmit}>
+              Save
+            </button>
           </div>
         </form>
         <div>

@@ -33,11 +33,11 @@ class MainService {
     return result.data;
   }
 
-  static async createUser() {
+  static async createUser(userCreated) {
     let result;
 
     await client
-      .post(`/api/members`, config)
+      .post(`/api/members`, config, userCreated)
       .then((resp) => {
         result = resp;
         console.log({ result });

@@ -4,13 +4,15 @@ const config = {
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 };
 
+const code = {
+  username: process.env.REACT_APP_AUTH_USERNAME,
+  password: process.env.REACT_APP_AUTH_PASSWORD,
+};
+
 class MainService {
-  static async postAuthentication(code) {
+  static async postAuthentication() {
     let result;
-    console.log(
-      'process.env.REACT_APP_AUTH_DOMAIN',
-      process.env.REACT_APP_AUTH_DOMAIN
-    );
+
     await client
       .post(`/auth`, code)
       .then((resp) => {
@@ -35,15 +37,15 @@ class MainService {
 
   static async createUser(userCreated) {
     let result;
-
+    console.log('post', { userCreated });
     await client
-      .post(`/api/members`, config, userCreated)
+      .post(`/api/members`, userCreated, config)
       .then((resp) => {
         result = resp;
         console.log({ result });
       })
       .catch((error) => console.log('error', error));
-    return result.data;
+    return result;
   }
 }
 

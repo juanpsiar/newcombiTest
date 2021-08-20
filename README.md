@@ -7,6 +7,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 Create a .env.development file in the root of the project and add the next values:
 
 - REACT_APP_AUTH_DOMAIN="http://localhost:8081"
+- REACT_APP_AUTH_USERNAME ='sarah'
+- REACT_APP_AUTH_PASSWORD= 'connor'
 
 ## Available Scripts
 

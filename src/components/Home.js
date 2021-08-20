@@ -12,14 +12,13 @@ export default function Home() {
     ssn: '',
   });
   const [msgError, setMsgError] = useState({
-    firstName: '',
-    lastName: '',
-    address: '',
-    ssn: '',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    address: 'address',
+    ssn: 'ssn',
   });
 
   const formatSSN = /\d{3}-\d{2}-\d{4}/;
-  let dataTable = [];
 
   useEffect(() => {
     getAccesToken();
@@ -27,26 +26,20 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (Object.values(msgError).join(' ').trim().length > 0) {
-      console.log({ msgError });
-      setDisableSubmit(true);
-    } else {
-      setDisableSubmit(false);
-    }
+    let flag = checkErrors();
+    setDisableSubmit(flag);
   }, [msgError]);
 
   const getAccesToken = async () => {
     let data = await MainService.postAuthentication();
-    console.log(data.token);
+
     localStorage.setItem('token', data.token);
   };
 
   const getTableDataApi = async () => {
     let tableData = await MainService.getTableData();
-    console.log({ tableData });
 
     setUserTable(tableData);
-    console.log({ userTable });
   };
 
   const renderTableData = () => {
@@ -80,16 +73,21 @@ export default function Home() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let data = await MainService.createUser(newUser);
-    console.log(data);
-    setUserTable([...userTable, newUser]);
-    setMsgError({ firstName: '', lastName: '', address: '', ssn: '' });
+    if (!checkErrors()) {
+      await MainService.createUser(newUser);
+      setUserTable([...userTable, newUser]);
+      setMsgError({
+        firstName: 'firstName',
+        lastName: 'lastName',
+        address: 'address',
+        ssn: 'ssn',
+      });
+    }
   };
 
   const ssnValidate = (checkValue, checkName) => {
     let uniqueSSN = [];
     uniqueSSN = userTable.find((elemt) => elemt.ssn === checkValue);
-    console.log({ uniqueSSN });
     if (uniqueSSN && !uniqueSSN.length > 0) {
       setMsgError({
         ...msgError,
@@ -108,8 +106,7 @@ export default function Home() {
   const validateValues = (name, value) => {
     if (name === 'ssn') {
       if (value.match(formatSSN)) {
-        console.log('coincide');
-        setMsgError({ ...msgError, [name]: `` });
+        setMsgError({ ...msgError, [name]: '' });
         return ssnValidate(value, name);
       } else {
         setMsgError({ ...msgError, [name]: `${name} format is invalid` });
@@ -121,35 +118,57 @@ export default function Home() {
         return true;
       } else {
         setMsgError({ ...msgError, [name]: `${name} length is invalid` });
+        return false;
       }
     }
   };
 
   const handleChange = (e) => {
-    console.log(e.target.value, e.target.name);
     let name = e.target.name;
     let value = e.target.value.trim();
     if (validateValues(name, value)) {
       setNewUser({ ...newUser, [name]: value });
+      //   if (Object.values(msgError).join(' ').trim().length > 0) {
+      //     setDisableSubmit(true);
+      //   } else {
+      //     setDisableSubmit(false);
+      //   }
     }
   };
 
   const cleanValues = () => {
     setNewUser({ firstName: '', lastName: '', address: '', ssn: '' });
     setMsgError({
-      firstName: '',
-      lastName: '',
-      address: '',
-      ssn: '',
+      firstName: 'firstName',
+      lastName: 'lastName',
+      address: 'address',
+      ssn: 'ssn',
     });
+  };
+
+  const checkErrors = () => {
+    let variables = Object.keys(msgError);
+    let flagButton = false;
+    for (let i = 0; i < variables.length; i++) {
+      let valueChecked = msgError[variables[i]];
+      if (valueChecked.length > 0) {
+        console.log('msgError[items]', msgError);
+        flagButton = true;
+        i = variables.length;
+      } else {
+        console.log('msgError[items]', msgError);
+      }
+    }
+
+    return flagButton;
   };
 
   return (
     <React.Fragment>
-      <div className='flex m-5 '>
+      <div className='flex mx-5 my-16'>
         <form
           //          onSubmit={() => handleSubmit()}
-          className='flex flex-col w-1/3 items-center   '
+          className=' flex flex-col w-1/3 items-center   '
         >
           <React.Fragment>
             <input
@@ -159,9 +178,10 @@ export default function Home() {
               placeholder='First Name'
               onChange={handleChange}
             />
-            {msgError.firstName.length > 0 && (
-              <label className='text-red-400'>{msgError.firstName}</label>
-            )}
+            {msgError.firstName !== 'firstName' &&
+              msgError.firstName.length > 0 && (
+                <label className='text-red-400'>{msgError.firstName}</label>
+              )}
           </React.Fragment>
           <React.Fragment>
             <input
@@ -171,9 +191,10 @@ export default function Home() {
               placeholder='Last Name'
               onChange={handleChange}
             />{' '}
-            {msgError.lastName.length > 0 && (
-              <label className='text-red-400'>{msgError.lastName}</label>
-            )}
+            {msgError.lastName !== 'lastName' &&
+              msgError.lastName.length > 0 && (
+                <label className='text-red-400'>{msgError.lastName}</label>
+              )}
           </React.Fragment>
           <React.Fragment>
             <input
@@ -183,7 +204,7 @@ export default function Home() {
               placeholder='Address'
               onChange={handleChange}
             />{' '}
-            {msgError.address.length > 0 && (
+            {msgError.address !== 'address' && msgError.address.length > 0 && (
               <label className='text-red-400'>{msgError.address}</label>
             )}
           </React.Fragment>
@@ -195,10 +216,13 @@ export default function Home() {
               placeholder='SSN'
               onChange={handleChange}
             />{' '}
-            {msgError.ssn.length > 0 && (
+            {msgError.ssn !== 'ssn' && msgError.ssn.length > 0 && (
               <label className='text-red-400'>{msgError.ssn}</label>
             )}
           </React.Fragment>
+          {/* {msgError.general.length > 0 && (
+            <label className='text-red-400'>{msgError.general}</label>
+          )} */}
           <div className='w-full flex justify-center text-white'>
             <button
               className='border rounded-lg bg-gray-500 w-1/3'

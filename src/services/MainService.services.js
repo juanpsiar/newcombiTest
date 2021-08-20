@@ -29,7 +29,6 @@ class MainService {
       .get(`/api/members`, config)
       .then((resp) => {
         result = resp;
-        console.log({ result });
       })
       .catch((error) => console.log('error', error));
     return result.data;
@@ -37,12 +36,10 @@ class MainService {
 
   static async createUser(userCreated) {
     let result;
-    console.log('post', { userCreated });
     await client
       .post(`/api/members`, userCreated, config)
       .then((resp) => {
         result = resp;
-        console.log({ result });
       })
       .catch((error) => console.log('error', error));
     return result;
